@@ -24,8 +24,8 @@ class EMA(Indicator):
 		out_series = df[self.on].ewm(span = self.period).mean()
 		
 		# For testing
-		df['EMA(14)'] = out_series
-		df.to_csv("../test_reports/EMA_test/EMA14.csv")
+# 		df['EMA(14)'] = out_series
+# 		df.to_csv("../test_reports/EMA_test/EMA14.csv")
 		
 		return out_series
 

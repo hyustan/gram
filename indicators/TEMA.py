@@ -22,7 +22,8 @@ class TEMA(Indicator):
 		:param: on: close, open, HLC/3
 		:return: the TEMA values as a panda series
 		'''
-		df[HLC_3] = (df[HIGH] + df[LOW] + df[CLOSE])/3
+		if self.on == HLC_3:
+			df[HLC_3] = (df[HIGH] + df[LOW] + df[CLOSE])/3
 		
 		df[f'EMA-{self.period}'] = df[self.on].ewm(span = self.period).mean()
 		df['EMA2'] = df[f'EMA-{self.period}'].ewm(span = self.period).mean()

@@ -7,6 +7,7 @@ from utils.GlobalVariables import *
 
 class SMI(Indicator):
         # Stochastic Momentum Index
+        # the calculation is based on 
 
         def __init__(self, period = 14, smoothing_period = 3):
                 super(SMI, self).__init__()
@@ -37,8 +38,5 @@ class SMI(Indicator):
 if __name__ == "__main__":
 	df = pd.read_csv("..\data\Forex\GBPUSD\GBPUSD_1D.csv", index_col = 0)
 	my_SMA = SMI(period = 14, smoothing_period = 3)
-	print(my_SMA.calculate(df))
-	
-
-
-
+	df['SMI(14,3)'] = my_SMA.calculate(df)
+	df.to_csv("SMI_test.csv")

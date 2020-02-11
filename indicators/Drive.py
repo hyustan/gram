@@ -17,7 +17,7 @@ class Drive(Indicator):
         '''
         returns the value of two lines which names are Up and Down
         :param: period: the priod of lines
-        the recomended period for this indicator due to mql4 site is 4, 16, 128
+        : the 
         :return: the Up and Down vlues as panda series
         '''
         df['Up'] = ((df[HIGH] - df[OPEN]) + (df[CLOSE] - df[LOW]))/2

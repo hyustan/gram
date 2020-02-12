@@ -15,7 +15,7 @@ class I5_34_5(Indicator):
 
     def calculate(self, df):
         '''
-        returns the value of ubtraction of the SMA(5) and SMA(34)
+        returns the value of subtraction of the SMA(5) and SMA(34)
         the original indicator has another line in it but because it's a C0 indicator
         I just calculated the first line value
         :param: No parameter is needed
@@ -37,5 +37,5 @@ class I5_34_5(Indicator):
 
 if __name__ == "__main__":
 	df = pd.read_csv("..\data\Forex\GBPUSD\GBPUSD_1D.csv", index_col = 0)
-	my_Drive = I5_34_5()
-	my_Drive.calculate(df)
+	my_I5_34_5 = I5_34_5()
+	my_I5_34_5.calculate(df)

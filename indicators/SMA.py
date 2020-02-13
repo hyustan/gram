@@ -20,9 +20,9 @@ class SMA(Indicator):
 		:param: on: close, open, HLC/3
 		:return: the SMA values as a panda series
 		'''
-		if self.on == HLC_3:
-			df[HLC_3] = (df[HIGH] + df[LOW] + df[CLOSE])/3
+		if self.on == HLC_3: df[HLC_3] = (df[HIGH] + df[LOW] + df[CLOSE])/3
 		out_series = df[self.on].rolling(window = self.period).mean()
+		if self.on == HLC_3: df.drop(columns=[HLC_3], inplace = True)
 		
 		# For testing
 		'''

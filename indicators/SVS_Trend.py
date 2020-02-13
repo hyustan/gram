@@ -27,6 +27,9 @@ class SVS_Trend(Indicator):
         SMA_period_1 = df['weighted_price'].rolling(window = self.period_1).mean()
         SMA_period_2 = df['weighted_price'].rolling(window = self.period_2).mean()
         out_series = SMA_period_1 - SMA_period_2
+
+        # dropping added columns
+        df.drop(columns = ['weighted_price'], inplace = True)
         
 		
 		# For testing

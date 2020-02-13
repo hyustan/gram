@@ -21,18 +21,16 @@ class I5_34_5(Indicator):
         :param: No parameter is needed
         :return: the subtraction vlues as panda series
         '''
-        df['MEDIAN'] = (df[HIGH] + df[LOW])/2
-        SMA_34 = df['MEDIAN'].rolling(34).mean()
-        SMA_5 = df['MEDIAN'].rolling(5).mean()
+        median = (df[HIGH] + df[LOW])/2
+        SMA_34 = median.rolling(34).mean()
+        SMA_5 = median.rolling(5).mean()
         out_series = SMA_5 - SMA_34
         
 		
 		# For testing
-		'''
-        df['5_34_5'] = out_series
+        # df['5_34_5'] = out_series
+        # df.to_csv("../test_reports/5_34_5_test/5_34_5.csv")
         
-        df.to_csv("../test_reports/5_34_5_test/5_34_5.csv")
-		'''
         return out_series
 
 if __name__ == "__main__":

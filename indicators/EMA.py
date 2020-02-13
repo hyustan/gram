@@ -20,9 +20,9 @@ class EMA(Indicator):
 		:param: on: close, open, HLC/3
 		:return: the EMA values as a panda series
 		'''
-		if self.on == HLC_3:
-			df[HLC_3] = (df[HIGH] + df[LOW] + df[CLOSE])/3
+		if self.on == HLC_3: df[HLC_3] = (df[HIGH] + df[LOW] + df[CLOSE])/3
 		out_series = df[self.on].ewm(span = self.period).mean()
+		if self.on == HLC_3: df.drop(columns=[HLC_3], inplace = True)
 		
 		# For testing
 # 		df['EMA(14)'] = out_series

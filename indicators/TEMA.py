@@ -22,14 +22,16 @@ class TEMA(Indicator):
 		:param: on: close, open, HLC/3
 		:return: the TEMA values as a panda series
 		'''
-		if self.on == HLC_3:
-			df[HLC_3] = (df[HIGH] + df[LOW] + df[CLOSE])/3
+		if self.on == HLC_3: df[HLC_3] = (df[HIGH] + df[LOW] + df[CLOSE])/3
 		
 		df[f'EMA-{self.period}'] = df[self.on].ewm(span = self.period).mean()
 		df['EMA2'] = df[f'EMA-{self.period}'].ewm(span = self.period).mean()
 		df['EMA3'] = df['EMA2'].ewm(span = self.period).mean()
-		
 		out_series = 3*df[f'EMA-{self.period}'] - 3*df['EMA2'] + df['EMA3']
+
+		# Dropping added columns
+		if self.on == HLC_3: df.drop(columns = [HLC_3])
+		df.drop(columns = [f'EMA-{self.period}', 'EMA2', 'EMA3'], inplace = True)
 		
 		# For testing
 # 		df['TEMA(14)'] = out_series
@@ -44,3 +46,4 @@ if __name__ == "__main__":
 	df = pd.read_csv("..\data\Forex\GBPUSD\GBPUSD_1D.csv", index_col = 0)
 	my_TEMA = TEMA(14, CLOSE)
 	print (my_TEMA.calculate(df))
+	print (df)

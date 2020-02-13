@@ -24,18 +24,17 @@ class Drive(Indicator):
         df['Down'] = ((df[OPEN] - df[LOW]) + (df[HIGH] - df[CLOSE]))/2
         out_series_up = df['Up'].rolling(window = self.period).mean()
         out_series_down = df['Down'].rolling(window = self.period).mean()
-        
-		
+        df.drop(columns=['Up', 'Down'], inplace = True)
+
 		# For testing
-		'''
-        df['Drive(20)-UP'] = out_series_up
-        df['Drive(20)-DOWN'] = out_series_down
-        
-        df.to_csv("../test_reports/Drive_test/Drive20.csv")
-		'''
+        # df['Drive(20)-UP'] = out_series_up
+        # df['Drive(20)-DOWN'] = out_series_down
+        # df.to_csv("../test_reports/Drive_test/Drive20.csv")
+
         return out_series_up,out_series_down
 
 if __name__ == "__main__":
 	df = pd.read_csv("..\data\Forex\GBPUSD\GBPUSD_1D.csv", index_col = 0)
 	my_Drive = Drive(20)
 	my_Drive.calculate(df)
+	print (df)

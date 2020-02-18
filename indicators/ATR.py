@@ -31,7 +31,7 @@ class ATR(Indicator):
         df['ATR(14)'] = out_series
         df.to_csv("../test_reports/ATR_test/ATR_14.csv")
         '''
-        #return out_series
+        return out_series
 
 if __name__ == "__main__":
 	df = pd.read_csv("..\data\Forex\GBPUSD\GBPUSD_1D.csv", index_col = 0)

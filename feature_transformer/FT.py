@@ -6,7 +6,7 @@ from utils.GlobalVariables import *
 class FT(object):
 	# Base class for all of the feature transformers
 	def __init__(self):
-		super(FC, self).__init__()
+		super(FT, self).__init__()
 
 	def transform(self, df):
 		# it construct a set of feature to be used in the GA, RL, or even static strategies

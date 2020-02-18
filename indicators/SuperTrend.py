@@ -49,11 +49,11 @@ class SuperTrend(Indicator):
         df.drop(['basic_ub', 'basic_lb', 'final_ub', 'final_lb', 'SuperTrend'], inplace=True, axis=1)
         
 		# For testing
-        #'''
+        '''
         df['SuperTrend10'] = out_series
         df.to_csv("../test_reports/SuperTrend_test/SuperTrend10.csv")
-        #'''
-        #return out_series
+        '''
+        return out_series
 
 if __name__ == "__main__":
 	df = pd.read_csv("..\data\Forex\GBPUSD\GBPUSD_1D.csv", index_col = 0)

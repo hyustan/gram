@@ -2,7 +2,7 @@
 import sys
 import pandas as pd
 sys.path.insert(0,'..')
-from Indicator import Indicator
+from indicators.Indicator import Indicator
 from utils.GlobalVariables import *
 
 class SMA(Indicator):
@@ -35,3 +35,4 @@ if __name__ == "__main__":
 	df = pd.read_csv("..\data\Forex\GBPUSD\GBPUSD_1D.csv", index_col = 0)
 	my_SMA = SMA(20, CLOSE)
 	my_SMA.calculate(df)
+	print ('Done')

@@ -3,7 +3,7 @@ import sys
 import os
 import pandas as pd
 from datetime import datetime
-sys.path.insert(0,'..')
+sys.path.insert(0, '..')
 from utils.GlobalVariables import *
 
 

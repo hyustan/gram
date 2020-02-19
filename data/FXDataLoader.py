@@ -21,7 +21,7 @@ class Pair(object):
 		'''
 
 		# creating the directory to rhe 
-		dir = os.path.join('Forex', self.pair, self.pair)
+		dir = os.path.join('..','data','Forex', self.pair, self.pair)
 
 		# loading the data
 		self._1D = pd.read_csv(dir+'_1D.csv', index_col = 0)

@@ -7,36 +7,35 @@ from Indicator import Indicator
 from utils.GlobalVariables import *
 
 class SPR(Indicator):
-        # SPR indicator: https://www.mql5.com/en/code/7065
-        # the code is written based on the discription in mql5 website
+    # SPR indicator: https://www.mql5.com/en/code/7065
+    # the code is written based on the discription in mql5 website
 
-        def __init__(self, period = 14):
-                super(SPR, self).__init__()
-                self.period = period
+    def __init__(self, period = 14):
+            super(SPR, self).__init__()
+            self.period = period
 
-        def calculate(self, df):
-                '''
-                returns the values of Spear's rank correlation
-                :param: period
-                :return: the SPR values a a panda series
+    def calculate(self, df):
+        '''
+        returns the values of Spear's rank correlation
+        :param: period
+        :return: the SPR values a a panda series
 
-                '''
-                def srd(values):
-                        # this function calculates the sum of squared rank-different
-                        ranking = values.rank()
-                        diff = ranking - 1 - range(len(values))
-                        return sum(diff**2)
-                df['SRD'] = df[CLOSE].rolling(self.period).apply(srd)
-                SPR = 1 - 6*df['SRD']/(self.period*(self.period**2-1))
+        '''
+        def srd(values):
+            # this function calculates the sum of squared rank-different
+            ranking = values.rank()
+            diff = ranking - 1 - range(len(values))
+            return sum(diff**2)
+        df['SRD'] = df[CLOSE].rolling(self.period).apply(srd, raw = False)
+        SPR = 1 - 6*df['SRD']/(self.period*(self.period**2-1))
 
+        # For testing
+        #df['SPR(14)'] = SPR
+        #df.to_csv("../test_reports/SPR_test/SPR14.csv")
 
+        df.drop(columns=['SRD'], inplace = True)
 
-                # For testing
-                #df['SPR(14)'] = SPR
-                #df.to_csv("../test_reports/SPR_test/SPR14.csv")
-
-
-                return SPR
+        return SPR
 
 
 if __name__ == "__main__":

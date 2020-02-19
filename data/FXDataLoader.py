@@ -54,7 +54,22 @@ class Pair(object):
 				raise NameError(f"Index column must be 'Date'"\
 								f"Check Pair: {self.pair} - Timeframe : {tf}")
 
+	def get_1D(self):
+		return self._1D
+
+	def get_4H(self):
+		return self._4H
+
+	def get_1H(self):
+		return self._1H
+
+	def get_5M(self):
+		return self._5M
+
 
 if __name__ == '__main__':
 	GBPUSD_data = Pair(GBPUSD)
-	print (GBPUSD_data._1H)
+	print (GBPUSD_data.get_1D())
+	print (GBPUSD_data.get_4H())
+	print (GBPUSD_data.get_1H())
+	print (GBPUSD_data.get_5M())

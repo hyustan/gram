@@ -25,9 +25,9 @@ class SuperTrend_FT(object):
 		df.drop(columns=['SuperTrend_FT'], inplace = True)
 
 		# For test
-		df['SuperTrend(20)'] = features
-		df['SuperTrend(20)_transformed'] = out_series
-		df.to_csv("../test_reports/SuperTrend_test/SuperTrend20_transformed.csv")
+		# df['SuperTrend(20)'] = features
+		# df['SuperTrend(20)_transformed'] = out_series
+		# df.to_csv("../test_reports/SuperTrend_test/SuperTrend20_transformed.csv")
 
 		return out_series
 

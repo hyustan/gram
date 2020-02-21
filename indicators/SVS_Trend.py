@@ -2,7 +2,7 @@
 import sys
 import pandas as pd
 sys.path.insert(0,'..')
-from Indicator import Indicator
+from indicators.Indicator import Indicator
 from utils.GlobalVariables import *
 
 class SVS_Trend(Indicator):

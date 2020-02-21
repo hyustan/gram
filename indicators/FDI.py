@@ -3,7 +3,7 @@ import sys
 import pandas as pd
 import numpy as np
 sys.path.insert(0,'..')
-from Indicator import Indicator
+from indicators.Indicator import Indicator
 from utils.GlobalVariables import *
 
 class FDI(Indicator):

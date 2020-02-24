@@ -7,7 +7,7 @@ PAIR = 'Pair'
 HLC_3 = 'HLC_3'
 PAIR = 'Pair'
 
-LONG, SHORT, WAIT = 1, -1, 0
+LONG, SHORT, WAIT , TRADE = 1, -1, 0, 1
 
 
 # All pairs # TODO: to be completed

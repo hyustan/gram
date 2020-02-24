@@ -4,7 +4,7 @@ import pandas as pd
 sys.path.insert(0,'..')
 from indicators.Indicator import Indicator
 from utils.GlobalVariables import *
-from ATR import ATR
+from indicators.ATR import ATR
 
 class SuperTrend(Indicator):
 	# SuperTrend indicator

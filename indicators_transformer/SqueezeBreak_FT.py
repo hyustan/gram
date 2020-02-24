@@ -25,9 +25,9 @@ class SqueezeBreak_FT(object):
 		df.drop(columns=['SqueezeBreak_FT'], inplace = True)
 
 		# For test
-		df['SqueezeBreak(14-20)'] = features
-		df['SqueezeBreak(14-20)_transformed'] = out_series
-		df.to_csv("../test_reports/SqueezeBreak_test/SqueezeBreak(14-20)_transformed.csv")
+		# df['SqueezeBreak(14-20)'] = features
+		# df['SqueezeBreak(14-20)_transformed'] = out_series
+		# df.to_csv("../test_reports/SqueezeBreak_test/SqueezeBreak(14-20)_transformed.csv")
 
 		return out_series
 

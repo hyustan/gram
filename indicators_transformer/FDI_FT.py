@@ -17,8 +17,8 @@ class FDI_FT(object):
 		df['FDI_FT'] = np.zeros(len(df))
 
 		# Interpreting the values
-		df.loc[features > 1.5, 'FDI_FT'] = TRADE
-		df.loc[features < 1.5, 'FDI_FT'] = WAIT
+		df.loc[features < 1.5, 'FDI_FT'] = TRADE
+		df.loc[features > 1.5, 'FDI_FT'] = WAIT
 
 		# make everything clean
 		out_series = df['FDI_FT']

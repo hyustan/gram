@@ -21,6 +21,7 @@ class BaseTrader(object):
 		if not os.path.exists(self.report_dir):
 			os.makedirs(self.report_dir)
 
+		# Crearing logger
 		logging_address = os.path.join(self.report_dir, 'Report.log')
 		self.log = Logger(logger_name = 'AwesomeLogger', address = logging_address , mode='a',
 							level = logging.DEBUG,

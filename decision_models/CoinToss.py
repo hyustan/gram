@@ -16,7 +16,7 @@ class CoinToss(object):
 		pass
 
 	def predict(self, inp):
-		return np.random.randint(3, size=len(inp)) - 2
+		return np.random.randint(3, size=len(inp)) - 1
 
 	def save(self):
 		pass

@@ -11,14 +11,18 @@ class Trade(object):
 
 	def set_opening_info(self, opening_time, main_open_price, aux_open_price, risk, balance):
 		self.opening_time = opening_time
-		self.main_open_price = main_open_price
-		self.aux_open_price = aux_open_price
+		self.main_opening_price = main_open_price
+		self.aux_opening_price = aux_open_price
 		self.risk = risk
 		self.balance = balance
 
-	def set_closing_info(self, closing_time, closing_price, closing_reason):
+		# TO be completed
+		self.volume = 0
+
+	def set_closing_info(self, closing_time, main_closing_price, aux_closing_price, closing_reason):
 		self.closing_time = closing_time
-		self.closing_price = closing_price
+		self.main_closing_price = main_closing_price
+		self.aux_closing_price = aux_closing_price
 		self.closing_reason = closing_reason
 
 	def evaluate(self):
@@ -28,8 +32,27 @@ class Trade(object):
 		# report as a dictionary of the required information
 		# It should calculate the profit as well
 
+		self.closing_balance = 0
+		self.profit
 
-		return profit, closing_balance, report
+		return self.profit, self.closing_balance
+
+	def report(self):
+		dic = {
+		'opening_time': self.opening_time,
+		'closing_time': self.closing_time,
+		'main_opening_price': self.main_opening_price,
+		'main_closing_price': self.main_closing_price,
+		'aux_opening_price': self.aux_opening_price,
+		'aux_closing_price': self.aux_closing_price,
+		'reason': self.closing_reason,
+		'balance': self.balance,
+		'closing_balance': self.closing_balance,
+		'risk': self.risk,
+		'volume': self.volume,
+		'profit': self.profit
+		}
+		return dic
 
 if __name__ == '__main__':
 	1

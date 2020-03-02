@@ -37,7 +37,7 @@ class Trade(object):
 
 		return self.profit, self.closing_balance
 
-	def report(self):
+	def get_report(self):
 		dic = {
 		'opening_time': self.opening_time,
 		'closing_time': self.closing_time,

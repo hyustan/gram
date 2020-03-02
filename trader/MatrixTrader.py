@@ -18,7 +18,14 @@ class RowTrader(BaseTrader):
 		self.risk = risk
 		self.initial_money = initial_money
 
-	def trade(self, , dm = 'Decision Model'):
-		pass
+	def simulate(self, dm = 'Decision Model'):
+		# Report should be dataframe of all trades consisiting the trades' reports
+		# Trades' report is a dictionary. You may find it in the Trade class in the same folder
+		# total_profit is the sum of all trades' profits
+
+		
+		self.report = None
+		self.total_profit = None
+		return total_profit, report
 
 if __name__ == '__main__':

@@ -3,8 +3,14 @@ import sys, os
 sys.path.insert(0,'..')
 from utils.GlobalVariables import *
 from utils.AwesomeLogger import Logger
+
+
 import logging
 from datetime import datetime
+import matplotlib.pyplot as plt
+import itertools
+import numpy as np
+import pprint
 
 
 class BaseTrader(object):
@@ -14,10 +20,10 @@ class BaseTrader(object):
 		super(BaseTrader, self).__init__()
 
 		# This is the name of the report folder, all reports including graphs, analysis, etc. will be saved under this name
-		name = pair_name + "-" + str(datetime.now())[:-10].replace(":", "-")
+		self.name = pair_name + "-" + str(datetime.now())[:-10].replace(":", "-")
 
 		# Creating the report directory
-		self.report_dir = f"../test_reports/Report-{name}"
+		self.report_dir = f"../test_reports/Report-{self.name}"
 		if not os.path.exists(self.report_dir):
 			os.makedirs(self.report_dir)
 
@@ -25,25 +31,93 @@ class BaseTrader(object):
 		logging_address = os.path.join(self.report_dir, 'Report.log')
 		self.log = Logger(logger_name = 'AwesomeLogger', address = logging_address , mode='a',
 							level = logging.DEBUG,
-							console_level = logging.INFO,
+							console_level = logging.WARNING,
 							file_level = logging.DEBUG)
 
 	def draw_graph(self):
 		# This method must draw a graph based on the report of the trades
-		pass
+		balances = self.report['closing_balance']
+
+		plt.plot(self.report.index, balances)
+		plt.xlabel("Closing time of trades")
+		plt.ylabel("balances")
+		plt.title(self.name)
+		plt.grid(True)
+		plt.savefig(os.path.join(self.report_dir, 'Balance.jpg'))
+		plt.close()
 
 	def analyze_trades(self):
 		# This method should analyze the trades and save them as a report
 		# This report should use logging
-		pass
+		# Total trades opened and closed in the simulation
+
+		# Finding the short and long positions
+		df = self.report.copy()
+		df['Type'] = (self.report['main_closing_price']-self.report['main_opening_price'])*self.report['profit']
+
+		long_positions = len(df[df['Type'] > 0])
+		short_positions = len(df[df['Type'] < 0])
+
+		win_trades = self.report[self.report['profit'] > 0]
+		loss_trades = self.report[self.report['profit'] < 0]
+
+		total_trades = len(self.report)
+		n_profit_trades = len(df[df['profit'] > 0])
+		n_loss_trades = len(df[df['profit'] < 0])
+
+		total_net_profit = df['profit'].sum()
+		gross_profit = df['profit'][df['profit'] > 0].sum()
+		gross_loss = df['profit'][df['profit'] < 0].sum()
+
+		expected_payoff = total_net_profit/total_trades
+		profit_factor = abs(gross_profit/gross_loss)
+
+		largest_profit_trade = win_trades['profit'].max()
+		largest_loss_trade = loss_trades['profit'].min()
+		average_profit_trade = win_trades['profit'].mean()
+		average_loss_trade = loss_trades['profit'].mean()
+
+		cons_wins, cons_loss = 0, 0
+		for k, g in itertools.groupby(df['profit'].astype('float64'), key=lambda n: n>0):
+
+			temp_len = len([val for val in g])
+			if k and temp_len > cons_wins:
+				cons_wins = temp_len
+			elif not k and temp_len > cons_loss:
+				cons_loss = temp_len
+
+		# Finding the maximum drawdown
+		maximums = np.maximum.accumulate(df['profit'])
+		maximum_drawdown = np.max(1 - df['profit']/maximums)
+
+		analysis_report = {'Total trades':total_trades,
+							'n_profit_trades': n_profit_trades,
+							'n_loss_trades': n_loss_trades,
+							'total_net_profit': total_net_profit,
+							'gross_profit': gross_profit,
+							'gross_loss': gross_loss,
+							'expected_payoff': expected_payoff,
+							'profit_factor': profit_factor,
+							'largest_profit_trade': largest_profit_trade,
+							'largest_loss_trade': largest_loss_trade,
+							'average_profit_trade': average_profit_trade,
+							'average_loss_trade': average_loss_trade,
+							'cons_wins': cons_wins,
+							'cons_loss': cons_loss}
+
+		self.log.info(pprint.pformat(analysis_report))
+		return analysis_report
+
 
 	def save_trade_history(self):
 		# This method saves the report created by the trader in a csv file
 		# The file should be similar to the MT4 trade history
-		pass
+		self.report.to_csv(os.path.join(self.report_dir, 'Trades_History.csv'))
 
 
 if __name__ == '__main__':
+
+	# For testing the methods
 	import pandas as pd
 	df = pd.read_csv('TestForBaseTrader.csv', index_col =0)
 
@@ -58,7 +132,9 @@ if __name__ == '__main__':
 	myBaseTrader = BaseTrader()
 	myBaseTrader.report = df
 
-	print (myBaseTrader.report)
+	myBaseTrader.draw_graph()
+	myBaseTrader.save_trade_history()
+	myBaseTrader.analyze_trades()
 
 
 

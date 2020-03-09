@@ -10,7 +10,7 @@ from utils.GlobalVariables import *
 class Pair(object):
 	def __init__(self, pair = GBPUSD):
 		super(Pair, self).__init__()
-		self.pair = pair
+		self.name = pair
 
 		self._load_data()
 

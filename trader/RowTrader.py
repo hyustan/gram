@@ -11,7 +11,7 @@ class RowTrader(BaseTrader):
 	# it predicts one row at a time
 
 	def __init__(self, main_pair, aux_pair, feature_generator, risk = 2, initial_money = 10000):
-		super(TestTrader, self).__init__()
+		super(TestTrader, self).__init__(main_pair.name)
 		self.main_pair = main_pair
 		self.aux_pair = aux_pair
 		self.features = features

@@ -11,10 +11,10 @@ class BaseTrader(object):
 	# Base class for creating trader agents
 	# This is a very rough idea, it must be completed in the future
 	def __init__(self):
-		super(BaseTrader, self).__init__()
+		super(BaseTrader, self).__init__(pair_name= 'UNSPECIFIED')
 
 		# This is the name of the report folder, all reports including graphs, analysis, etc. will be saved under this name
-		name = str(datetime.now())[:-10].replace(":", "-")
+		name = pair_name + "-" str(datetime.now())[:-10].replace(":", "-")
 
 		# Creating the report directory
 		self.report_dir = f"../test_reports/Report-{name}"

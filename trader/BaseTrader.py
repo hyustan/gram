@@ -10,8 +10,8 @@ from datetime import datetime
 class BaseTrader(object):
 	# Base class for creating trader agents
 	# This is a very rough idea, it must be completed in the future
-	def __init__(self):
-		super(BaseTrader, self).__init__(pair_name= 'UNSPECIFIED')
+	def __init__(self, pair_name= 'UNSPECIFIED'):
+		super(BaseTrader, self).__init__()
 
 		# This is the name of the report folder, all reports including graphs, analysis, etc. will be saved under this name
 		name = pair_name + "-" str(datetime.now())[:-10].replace(":", "-")

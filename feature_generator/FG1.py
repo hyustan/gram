@@ -38,9 +38,27 @@ class FG1(FG):
 
 		features = pd.concat([baseline, first_trend_ind, second_trend_ind, volume], join = 'inner', axis = 1)
 
-		print (features)
+		return features
 
-	
+	def generate(self, df, idx):
+		i = df.index.get_loc(idx)
+		new_df = df.iloc[i-200:i+1, :].copy()
+
+		# Calculating indicators
+		baseline = EMA(20, CLOSE).calculate(new_df)
+		first_trend_ind = SuperTrend(10, 3).calculate(new_df)
+		second_trend_ind = AroonHorn(20).calculate(new_df)
+		volume = SqueezeBreak(20, 20).calculate(new_df)
+
+		baseline = EMA_FT().transform(new_df, baseline)
+		first_trend_ind = SuperTrend_FT().transform(new_df, first_trend_ind)
+		second_trend_ind = AroonHorn_FT().transform(new_df, second_trend_ind)
+		volume = SqueezeBreak_FT().transform(new_df, volume)
+
+		features = pd.concat([baseline, first_trend_ind, second_trend_ind, volume], join = 'inner', axis = 1).iloc[-1].tolist()
+
+		return features
+
 
 if __name__ == "__main__":
 	# Loading the data
@@ -51,6 +69,9 @@ if __name__ == "__main__":
 	df = GBPUSD_data.get_1D()
 
 	fg = FG1()
-	fg.generate_all_features(df)
+
+	import datetime
+	idx = datetime.datetime.strptime('7/18/1994 0:00', "%m/%d/%Y %H:%M")
+	fg.generate(df, idx)
 
 

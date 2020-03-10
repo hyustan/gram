@@ -53,10 +53,9 @@ class BaseTrader(object):
 
 		# Finding the short and long positions
 		df = self.report.copy()
-		df['Type'] = (self.report['main_closing_price']-self.report['main_opening_price'])*self.report['profit']
 
-		long_positions = len(df[df['Type'] > 0])
-		short_positions = len(df[df['Type'] < 0])
+		long_positions = len(df[df['type'] > 0])
+		short_positions = len(df[df['type'] < 0])
 
 		win_trades = self.report[self.report['profit'] > 0]
 		loss_trades = self.report[self.report['profit'] < 0]

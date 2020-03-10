@@ -25,8 +25,8 @@ class AroonHorn(Indicator):
 
 		Similar foraroon down
 		'''
-		df['Aroon_Up'] = (df[HIGH].rolling(self.period).apply(np.argmax))/(self.period-1)*100
-		df['Aroon_Down'] = (df[LOW].rolling(self.period).apply(np.argmin))/(self.period-1)*100
+		df['Aroon_Up'] = (df[HIGH].rolling(self.period).apply(np.argmax, raw=True))/(self.period-1)*100
+		df['Aroon_Down'] = (df[LOW].rolling(self.period).apply(np.argmin, raw= True))/(self.period-1)*100
 
 		aroon_up = df['Aroon_Up']
 		aroon_down = df['Aroon_Down']

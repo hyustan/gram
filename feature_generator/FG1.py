@@ -42,7 +42,7 @@ class FG1(FG):
 
 	def generate(self, df, idx):
 		i = df.index.get_loc(idx)
-		new_df = df.iloc[i-200:i+1, :].copy()
+		new_df = df.iloc[i-100:i+1, :].copy()
 
 		# Calculating indicators
 		baseline = EMA(20, CLOSE).calculate(new_df)

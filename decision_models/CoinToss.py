@@ -7,7 +7,7 @@ from decision_models.BaseDecisionModel import BaseDecisionModel
 import numpy as np
 
 class CoinToss(BaseDecisionModel):
-	# Base class for indicators
+	# CoinToss decision maker which opens and closes a position randomly
 	def __init__(self, D = 5):
 		super(CoinToss, self).__init__()
 		self.D = D

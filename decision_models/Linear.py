@@ -93,7 +93,6 @@ if __name__ == '__main__':
 
 	import pandas as pd
 	from sklearn.model_selection import train_test_split
-	from sklearn.preprocessing import OneHotEncoder
 	from sklearn.metrics import mean_squared_error
 
 	df = pd.read_csv("RegressionTest.csv", index_col = 0)

@@ -46,8 +46,8 @@ class SqueezeBreak(Indicator):
 		squeeze_break = 2*(boll_upper-keltner_upper)
 
 		# For testing
-		df['SqueezeBreak(20)'] = squeeze_break
-		df.to_csv("../test_reports/SqueezeBreak20.csv")
+		# df['SqueezeBreak(20)'] = squeeze_break
+		# df.to_csv("../test_reports/SqueezeBreak20.csv")
 
 		return squeeze_break
 

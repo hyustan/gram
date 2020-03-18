@@ -41,8 +41,7 @@ class Pair(object):
 
 		# Applying date parser to the indices
 		for df in all_dfs:
-			df.index.map(date_parser_1)
-
+			df.index = df.index.map(date_parser_1)
 
 		# Checking the columns orders
 		for df, tf in zip(all_dfs, time_frames):

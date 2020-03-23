@@ -9,7 +9,7 @@ import pandas as pd
 
 class Linear(BaseDecisionModel):
 	# Linear model for decision making
-	def __init__(self, D, address, name, warm_up = False, n_trained = 0):
+	def __init__(self, D, address, name, warm_up = False, n_trained = 0, use_intercept = True):
 		super(Linear, self).__init__()
 		'''	
 		:params: D int : is the dimension of features (i.e., independent variables)
@@ -19,14 +19,18 @@ class Linear(BaseDecisionModel):
 				if True, it will be loaded
 		:params: n_trained int : number of times that the model has been trained
 		'''
+		self.use_intercept = use_intercept
+
 		self.D = D
+		if self.use_intercept: self.D = self.D + 1
+
 		self.address = address
 		self.name = name
 		# The model has three vectors, each vector corresponds to a decision namely SHORT, WAIT, LONG
 		if warm_up:
 			self.load(address, name)
 		else:
-			self.model = np.random.randn(3, D) / np.sqrt(D)
+			self.model = np.random.randn(3, self.D) / np.sqrt(self.D)
 
 	def learn(self, X, Y, action, lr = 0.0002):
 		# Gradient descent algorithm
@@ -34,6 +38,10 @@ class Linear(BaseDecisionModel):
 		# by reaching that model in self.model
 		# action+1 is for indexing
 		X = np.atleast_2d(X)
+		if self.use_intercept:
+			intercept = np.ones((X.shape[0], 1))
+			X = np.append(X, intercept, axis = 1)
+
 		self.model[action+1] += lr * (Y - X.dot(self.model[action+1])/X.shape[0]).dot(X)
 
 	def get_weights(self):
@@ -43,6 +51,10 @@ class Linear(BaseDecisionModel):
 		self.model = weights
 
 	def predict_value(self, X):
+		if self.use_intercept:
+			intercept = np.ones((X.shape[0], 1))
+			X = np.append(X, intercept, axis = 1)
+			
 		return X.dot(np.transpose(self.model))
 
 	def decide(self, X):

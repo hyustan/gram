@@ -14,14 +14,18 @@ class Trade(object):
 		self.main_pair_name = main_pair_name
 		self.aux_pair_name = aux_pair_name
 
-	def set_opening_info(self, opening_time, main_open_price, aux_open_price, trade_type, balance, ATR, risk):
+	def set_opening_info(self, opening_time , main_open_price, aux_open_price,
+                             trade_type, balance, ATR, risk, stop_loss1,
+                             stop_loss2,pelle_price):
 		self.opening_time = opening_time
 		self.main_opening_price = main_open_price
 		self.aux_opening_price = aux_open_price
 		self.risk = risk
 		self.balance = balance
 		self.trade_type = trade_type
-
+		self.stop_loss1 = stop_loss1
+		self.stop_loss2 = stop_loss2
+		self.pelle_price = pelle_price
 		# Set the pip  value
 		if self.main_pair_name[-3:] == 'USD':
 			self.pip_value = 10
@@ -67,7 +71,8 @@ class Trade(object):
 		else:
 			raise ValueError ("Something is wrong with the trade size calculation")
 
-	def set_closing_info_1(self, closing_time, main_closing_price, aux_closing_price, closing_reason):
+	def set_closing_info_1(self, closing_time, main_closing_price,
+                               aux_closing_price, closing_reason):
 		self.closing_time_1 = closing_time
 		self.main_closing_price_1 = main_closing_price
 		self.aux_closing_price_1 = aux_closing_price

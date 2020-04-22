@@ -43,7 +43,7 @@ class BaseTrader(object):
 		plt.ylabel("balances")
 		plt.title(self.name)
 		plt.grid(True)
-		plt.savefig(os.path.join(self.report_dir, 'Balance.jpg'))
+		plt.savefig(os.path.join(self.report_dir, 'Balance.png'))
 		plt.close()
 
 	def analyze_trades(self):

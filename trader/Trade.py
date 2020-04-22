@@ -87,9 +87,8 @@ class Trade(object):
 
 	def evaluate(self):
 		pip_factor = 100 if 'JPY' in self.main_pair_name else 10000
-		direction = 1 if self.trade_type is 'LONG' else -1
                 
-		self.profit = direction*self.trade_size/2 * pip_factor  * ((self.main_closing_price_1-self.main_opening_price)+ \
+		self.profit = self.trade_type*self.trade_size/2 * pip_factor  * ((self.main_closing_price_1-self.main_opening_price)+ \
 																			(self.main_closing_price_2-self.main_opening_price))
 		self.closing_balance = self.balance + self.profit
 

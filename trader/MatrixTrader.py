@@ -153,7 +153,7 @@ if __name__ == '__main__':
 	GBPUSD_data = Pair(GBPUSD)
 	# Dataframe for test
 	dfall = GBPUSD_data.get_1D()
-	df = dfall[-500:-200]# the five minutes time frame does not cover the 1 D range!!!!
+	df = dfall.loc[dfall.index[-500:-200]]# the five minutes time frame does not cover the 1 D range!!!!
 	df.index = df.index + timedelta(hours=13)# I am guessing we are not going to trade at 00:00:00 every day
 	atr = ATR(14)
 	df['ATR'] = atr.calculate(df)

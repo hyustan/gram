@@ -16,7 +16,7 @@ class Trade(object):
 
 	def set_opening_info(self, opening_time , main_open_price, aux_open_price,
                              trade_type, balance, ATR, risk, stop_loss1,
-                             stop_loss2,pelle_price):
+                             stop_loss2,Pelleprice,Takeprofit):
 		self.opening_time = opening_time
 		self.main_opening_price = main_open_price
 		self.aux_opening_price = aux_open_price
@@ -25,7 +25,8 @@ class Trade(object):
 		self.trade_type = trade_type
 		self.stop_loss1 = stop_loss1
 		self.stop_loss2 = stop_loss2
-		self.pelle_price = pelle_price
+		self.Pelleprice = Pelleprice
+		self.Takeprofit = Takeprofit
 		# Set the pip  value
 		if self.main_pair_name[-3:] == 'USD':
 			self.pip_value = 10
@@ -60,7 +61,7 @@ class Trade(object):
 		Obviously for any pair with JPY all the 10,000 will change to 100
 		'''
 		modifier = 10000 if not 'JPY' in self.main_pair_name else 100
-		our_pip_value = risk * balance / (1.5 * ATR * modifier)
+		pip_value = risk * balance / (1.5 * ATR * modifier)
 
 		if self.main_pair_name[-3:] == 'USD':
 			self.trade_size = pip_value * modifier
@@ -82,13 +83,14 @@ class Trade(object):
 		self.closing_time_2 = closing_time
 		self.main_closing_price_2 = main_closing_price
 		self.aux_closing_price_2 = aux_closing_price
-		self.closing_info_2 = closing_reason
+		self.closing_reason_2 = closing_reason
 
 	def evaluate(self):
 		pip_factor = 100 if 'JPY' in self.main_pair_name else 10000
-
-		self.profit = self.trade_size/2 * pip_factor * self.trade_type * ((self.main_closing_price_1-self.main_opening_price_1)+ \
-																			(self.main_closing_price_2-self.main_opening_price_2))
+		direction = 1 if self.trade_type is 'LONG' else -1
+                
+		self.profit = direction*self.trade_size/2 * pip_factor  * ((self.main_closing_price_1-self.main_opening_price)+ \
+																			(self.main_closing_price_2-self.main_opening_price))
 		self.closing_balance = self.balance + self.profit
 
 		return self.profit, self.closing_balance
@@ -110,7 +112,7 @@ class Trade(object):
 		'balance': self.balance,
 		'closing_balance': self.closing_balance,
 		'risk': self.risk,
-		'volume': self.volume,
+		'volume': self.trade_size,
 		'profit': self.profit
 		}
 		return dic

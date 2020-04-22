@@ -8,18 +8,21 @@ from utils.GlobalVariables import *
 import BaseTrader
 from Trade import Trade
 from data.FXDataLoader import Pair
+from indicators.ATR import ATR
+from datetime import datetime, timedelta
 
 class MatrixTrader():
 
         # The trade's method of this class will iterate over rows
         # it predicts one row at a time
 
-        def __init__(self,main_pair_name, aux_pair_name,df,df_moment,balance):
+        def __init__(self,main_pair_name, aux_pair_name,df,df_moment,balance,risk = 0.03):
                 self.main_pair_name = main_pair_name
                 self.aux_pair_name = aux_pair_name
                 self.df = df
                 self.df_moment = df_moment
                 self.balance = balance
+                self.risk = risk
                 
         def simulate(self):
                 # Report should be dataframe of all trades consisiting the trades' reports
@@ -47,44 +50,45 @@ class MatrixTrader():
 
                                         trade.evaluate()
                                         trade_report = trade.get_report()
-                                        balance = trade.closing_balance()
+                                        balance = trade.closing_balance
                                         trade_list.append(trade_report)
                                         # check pelle                        
                                         if trade.trade_type is 'LONG' and row[CLOSE] > trade.Pelleprice:
-                                                trade.Stoploss_trade2 = trade.Pelleprice-ATR
-                                                trade.Pelleprice = trade.Pelleprice+ATR
+                                                trade.Stoploss_trade2 = trade.Pelleprice-row['ATR']
+                                                trade.Pelleprice = trade.Pelleprice+row['ATR']
                                         if trade.trade_type is 'SHORT' and row[CLOSE] < trade.Pelleprice:
-                                                trade.stop_loss2 = trade.Pelleprice+ATR
-                                                trade.Pelleprice = trade.Pelleprice-ATR
+                                                trade.stop_loss2 = trade.Pelleprice+row['ATR']
+                                                trade.Pelleprice = trade.Pelleprice-row['ATR']
                                 else:
-                                        for moment_row in df_moment[index:nex_index]:
-                                                # check stoploss
-                                                crossSL1 = ((trade.trade_type is 'SHORT' and moment_row[CLOSE] > trade.Stoploss_trade1) or
-                                                            (trade.trade_type is 'LONG' and moment_row[CLOSE] < trade.Stoploss_trade1))
 
-                                                crossSL2 = ((trade.trade_type is 'SHORT' and moment_row[CLOSE] > trade.Stoploss_trade2) or
-                                                            (trade.trade_type is 'LONG' and moment_row[CLOSE] < trade.Stoploss_trade2))
+                                        for time,moment_row in df_moment.loc[index:next_index].iterrows():
+                                                # check stoploss
+                                                crossSL1 = ((trade.trade_type is 'SHORT' and moment_row[CLOSE] > trade.stop_loss1) or
+                                                            (trade.trade_type is 'LONG' and moment_row[CLOSE] < trade.stop_loss1))
+
+                                                crossSL2 = ((trade.trade_type is 'SHORT' and moment_row[CLOSE] > trade.stop_loss2) or
+                                                            (trade.trade_type is 'LONG' and moment_row[CLOSE] < trade.stop_loss2))
 
                                                 if crossSL2:
                                                         in_trade = False
-                                                        if 'close_trade1' not in trade:
-                                                                trade.set_closing_info_1(closing_time = moment_row.index,
+                                                        if not hasattr(trade,'close_trade1'):
+                                                                trade.set_closing_info_1(closing_time = time,
                                                                                          main_closing_price = moment_row[CLOSE],
                                                                                          aux_closing_price = moment_row[CLOSE],
                                                                                          closing_reason = 'stop loss')
 
-                                                        trade.set_closing_info_2(closing_time = moment_row.index,
+                                                        trade.set_closing_info_2(closing_time = time,
                                                                                          main_closing_price = moment_row[CLOSE],
                                                                                          aux_closing_price = moment_row[CLOSE],
                                                                                          closing_reason = 'stop loss')
                                                         trade.evaluate()
                                                         trade_report = trade.get_report()
-                                                        balance = trade.closing_balance()
+                                                        balance = trade.closing_balance
                                                         trade_list.append(trade_report)
                                                         break
                                                             
                                                 if crossSL1:
-                                                        trade.update(closing_time = moment_row.index,
+                                                        trade.set_closing_info_1(closing_time = time,
                                                                                          main_closing_price = moment_row[CLOSE],
                                                                                          aux_closing_price = moment_row[CLOSE],
                                                                                          closing_reason = 'stop loss')                                                
@@ -93,7 +97,7 @@ class MatrixTrader():
                                                            (trade.trade_type is 'LONG' and moment_row[CLOSE] > trade.Takeprofit))
 
                                                 if crossTP:
-                                                        trade.set_closing_info_1(closing_time = moment_row.index,
+                                                        trade.set_closing_info_1(closing_time = time,
                                                                                          main_closing_price = moment_row[CLOSE],
                                                                                          aux_closing_price = moment_row[CLOSE],
                                                                                          closing_reason = 'take profit')
@@ -103,47 +107,68 @@ class MatrixTrader():
                         if (not in_trade) and not row['signal']:
                                 continue
                         if (not in_trade) and row['signal'] == 1:
+                                if row['ATR'] != row['ATR']:
+                                        continue
                                 in_trade = True
-                                main_pair_name = self.main_pair_name
-                                aux_pair_name = self.aux_pair_name
-                                trade = Trade(main_pair_name, aux_pair_name)
-                                trade.set_opening_info(opening_time = row.index,
+                                trade = Trade(self.main_pair_name, self.aux_pair_name)
+                                trade.set_opening_info(opening_time = index,
                                                  main_open_price = df[OPEN][next_index],
                                                  aux_open_price = df[OPEN][next_index],
                                                  trade_type = 'LONG',
                                                  balance = balance,
-                                                 ATR = ATR,
-                                                 risk = risk,
-                                                 stop_loss1=  df[OPEN][next_index] - 1.5*ATR,
-                                                 stop_loss2 = df[OPEN][next_index] - 1.5*ATR,
-                                                 Pelleprice = df[OPEN][next_index] + ATR,
-                                                 Takeprofit = df[OPEN][next_index] + ATR)
+                                                 ATR = row['ATR'],
+                                                 risk = self.risk,
+                                                 stop_loss1=  df[OPEN][next_index] - 1.5*row['ATR'],
+                                                 stop_loss2 = df[OPEN][next_index] - 1.5*row['ATR'],
+                                                 Pelleprice = df[OPEN][next_index] + row['ATR'],
+                                                 Takeprofit = df[OPEN][next_index] + row['ATR'])
 
 
                         if (not in_trade) and row['signal'] == -1:
+                                if row['ATR'] != row['ATR']:
+                                        continue
                                 in_trade = True
-                                trade = Trade(main_pair_name, aux_pair_name)
-                                trade.set_opening_info(opening_time = row.index,
-                                                 main_open_price = df[OPEN][next_index].value,
-                                                 aux_open_price = df[OPEN][next_index].value,
+                                trade = Trade(self.main_pair_name, self.aux_pair_name)
+                                trade.set_opening_info(opening_time = index,
+                                                 main_open_price = df[OPEN][next_index],
+                                                 aux_open_price = df[OPEN][next_index],
                                                  trade_type = 'SHORT',
                                                  balance = balance,
-                                                 ATR = ATR,
-                                                 risk = risk,
-                                                 stop_loss1=  df[OPEN][next_index].value + 1.5*ATR,
-                                                 stop_loss2 = df[OPEN][next_index].value + 1.5*ATR,
-                                                 Pelleprice = df[OPEN][next_index].value - ATR,
-                                                 Takeprofit = df[OPEN][next_index].value - ATR)
+                                                 ATR = row['ATR'],
+                                                 risk = self.risk,
+                                                 stop_loss1=  df[OPEN][next_index] + 1.5*row['ATR'],
+                                                 stop_loss2 = df[OPEN][next_index] + 1.5*row['ATR'],
+                                                 Pelleprice = df[OPEN][next_index] - row['ATR'],
+                                                 Takeprofit = df[OPEN][next_index] - row['ATR'])
 
 
 
-                trade_log = pd.DataFrame(trade_list)            
-                return trade_log
+                trade_log = pd.DataFrame(trade_list)
+                self.trade_log = trade_log
+                
+        def plot_balance():
+                plt.plot(self.trade_log['closing_time_2'],self.trade_log['closing_balance'])
+                plt.xlabel("Closing time of trades")
+                plt.ylabel("balances")
+                plt.grid(True)
+                plt.savefig('Balance.jpg')
+                plt.close()
+		
+        def writeCsv():
+                self.trade_log.to_csv('trade_log.csv')
+
+
 if __name__ == '__main__':
         GBPUSD_data = Pair(GBPUSD)
         # Dataframe for test
-        df = GBPUSD_data.get_1D()
-        df['signal'] = 1
+        dfall = GBPUSD_data.get_1D()
+        df = dfall[-500:-200]# the five minutes time frame does not cover the 1 D range!!!!
+        df.index = df.index + timedelta(hours=13)# I am guessing we are not going to trade at 00:00:00 every day
+        atr = ATR(14)
+        df['ATR'] = atr.calculate(df)
+        df['signal'] = -1
         df_moment = GBPUSD_data.get_5M()
         matrix_trader = MatrixTrader('GBPUSD','GBPUSD',df,df_moment,1000)
-        trade_log = matrix_trader.simulate()
+        matrix_trader.simulate()
+        matrix_trader.writeCsv()
+        matrix_trader.plot_balance()

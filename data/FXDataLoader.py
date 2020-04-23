@@ -8,9 +8,9 @@ from utils.GlobalVariables import *
 
 
 class Pair(object):
-	def __init__(self, pair = GBPUSD):
+	def __init__(self, name = GBPUSD):
 		super(Pair, self).__init__()
-		self.pair = pair
+		self.name = name
 
 		self._load_data()
 
@@ -21,7 +21,7 @@ class Pair(object):
 		'''
 
 		# creating the directory to rhe 
-		dir = os.path.join('..','data','Forex', self.pair, self.pair)
+		dir = os.path.join('..','data','Forex', self.name, self.name)
 
 		# loading the data
 		self._1D = pd.read_csv(dir+'_1D.csv', index_col = 0)

@@ -16,7 +16,7 @@ class Trade(object):
 
 	def set_opening_info(self, opening_time , main_open_price, aux_open_price,
                              trade_type, balance, ATR, risk, stop_loss1,
-                             stop_loss2,Pelleprice,Takeprofit):
+                             stop_loss2,pelle_price,take_profit):
 		self.opening_time = opening_time
 		self.main_opening_price = main_open_price
 		self.aux_opening_price = aux_open_price
@@ -25,8 +25,8 @@ class Trade(object):
 		self.trade_type = trade_type
 		self.stop_loss1 = stop_loss1
 		self.stop_loss2 = stop_loss2
-		self.Pelleprice = Pelleprice
-		self.Takeprofit = Takeprofit
+		self.pelle_price = pelle_price
+		self.take_profit = take_profit
 		# Set the pip  value
 		if self.main_pair_name[-3:] == 'USD':
 			self.pip_value = 10
@@ -34,6 +34,9 @@ class Trade(object):
 			self.pip_value = 10 / aux_open_price
 		elif self.aux_pair_name[:3] == 'USD':
 			self.pip_value = 10 * aux_open_price
+
+		self.trade_1_open = True
+		self.trade_2_open = True
 
 		'''
 		Trade size and Risk:
@@ -78,17 +81,18 @@ class Trade(object):
 		self.main_closing_price_1 = main_closing_price
 		self.aux_closing_price_1 = aux_closing_price
 		self.closing_reason_1 = closing_reason
+		self.trade_1_open = False
 
 	def set_closing_info_2(self, closing_time, main_closing_price, aux_closing_price, closing_reason):
 		self.closing_time_2 = closing_time
 		self.main_closing_price_2 = main_closing_price
 		self.aux_closing_price_2 = aux_closing_price
 		self.closing_reason_2 = closing_reason
+		self.trade_2_open = False
 
 	def evaluate(self):
-		pip_factor = 100 if 'JPY' in self.main_pair_name else 10000
                 
-		self.profit = self.trade_type*self.trade_size/2 * pip_factor  * ((self.main_closing_price_1-self.main_opening_price)+ \
+		self.profit = self.trade_type*self.trade_size/2  * ((self.main_closing_price_1-self.main_opening_price)+ \
 																			(self.main_closing_price_2-self.main_opening_price))
 		self.closing_balance = self.balance + self.profit
 

@@ -51,7 +51,7 @@ class MatrixTrader(BaseTrader):
 
 		# iterating over indices
 		for index, next_index in zip(signals.index[:-1], signals.index[1:]):
-			
+		
 			# Knowing the signal at the current time
 			signal = signals[index]
 
@@ -69,13 +69,13 @@ class MatrixTrader(BaseTrader):
 					# Check if we have closed the trade_1 yet or not
 					if trade.trade_1_open:
 						trade.set_closing_info_1(closing_time = index,
-												main_closing_price = row[CLOSE],
-									 			aux_closing_price = row[CLOSE],
+												main_closing_price = self.df.loc[index, CLOSE],
+									 			aux_closing_price = self.df.loc[index, CLOSE],
 									 			closing_reason = 'opposite_signal')
 					# Closing the trade_2
 					trade.set_closing_info_2(closing_time = index,
-											main_closing_price = row[CLOSE],
-								 			aux_closing_price = row[CLOSE],
+											main_closing_price = self.df.loc[index, CLOSE],
+								 			aux_closing_price = self.df.loc[index, CLOSE],
 								 			closing_reason = 'opposite_signal')
 
 					profit, balance = trade.evaluate()
@@ -83,12 +83,13 @@ class MatrixTrader(BaseTrader):
 					total_profits += profit
 
 					# check pelle                        
-					if trade.trade_type is LONG and row[CLOSE] > trade.pelle_price:
-						trade.Stoploss_trade2 = trade.pelle_price-row['ATR']
-						trade.pelle_price = trade.pelle_price+row['ATR']
-					if trade.trade_type is SHORT and row[CLOSE] < trade.pelle_price:
-						trade.stop_loss2 = trade.pelle_price+row['ATR']
-						trade.pelle_price = trade.pelle_price-row['ATR']
+					if trade.trade_type is LONG and self.df.loc[index, CLOSE] > trade.pelle_price:
+						trade.Stoploss_trade2 = trade.pelle_price - self.atr[index]
+						trade.pelle_price = trade.pelle_price + self.atr[index]
+					
+					if trade.trade_type is SHORT and self.df.loc[index, CLOSE] < trade.pelle_price:
+						trade.stop_loss2 = trade.pelle_price + self.atr[index]
+						trade.pelle_price = trade.pelle_price - self.atr[index]
 				else:
 
 					for time, moment_row in self.main_pair.get_5M().loc[index:next_index].iterrows():
@@ -132,28 +133,31 @@ class MatrixTrader(BaseTrader):
 											 main_closing_price = moment_row[CLOSE],
 											 aux_closing_price = moment_row[CLOSE],
 											 closing_reason = 'take_profit')
-			if not in_trade:
-				if row['ATR'] != row['ATR']:
-					continue
+			
+			if not in_trade and pd.notna(self.atr[index]):
+
 				trade_type = signal
 				in_trade = True
-				trade = Trade(self.main_pair_name, self.aux_pair_name)
+				trade = Trade(self.main_pair.name, self.aux_pair.name)
 				trade.set_opening_info(opening_time = next_index,
 						 main_open_price = self.df[OPEN][next_index],
 						 aux_open_price = self.df[OPEN][next_index],
 						 trade_type = trade_type,
 						 balance = balance,
-						 ATR = row['ATR'],
+						 ATR = self.atr[index],
 						 risk = self.risk,
-						 stop_loss1=  self.df[OPEN][next_index] - trade_type * 1.5 * row['ATR'],
-						 stop_loss2 = self.df[OPEN][next_index] - trade_type * 1.5 * row['ATR'],
-						 pelle_price = self.df[OPEN][next_index] + trade_type * row['ATR'],
-						 take_profit = self.df[OPEN][next_index] + trade_type * row['ATR'])
+						 stop_loss1=  self.df[OPEN][next_index] - trade_type * 1.5 * self.atr[index],
+						 stop_loss2 = self.df[OPEN][next_index] - trade_type * 1.5 * self.atr[index],
+						 pelle_price = self.df[OPEN][next_index] + trade_type * self.atr[index],
+						 take_profit = self.df[OPEN][next_index] + trade_type * self.atr[index],
+						 spread = self.spread)
 
 		self.report = pd.DataFrame(trade_list)
 
-		if should_draw: self.draw_graph()
-		if should_analyze: self.analyze_trades()
+		print (self.report)
+
+		if should_draw: self.draw_graph(should_show = True)
+		if should_analyze: self.analyze_trades(verbose = True)
 		if should_save: self.save_trade_history()
 
 		return total_profits
@@ -162,46 +166,12 @@ class MatrixTrader(BaseTrader):
 
 
 if __name__ == '__main__':
-	# GBPUSD_data = Pair(GBPUSD)
-	# # Dataframe for test
-	# dfall = GBPUSD_data.get_1D()
-	# df = dfall[-500:-200]# the five minutes time frame does not cover the 1 D range!!!!
-	# df.index = df.index + timedelta(hours=13)# I am guessing we are not going to trade at 00:00:00 every day
-	# atr = ATR(14)
-	# df['ATR'] = atr.calculate(df)
-	# df['signal'] = -1
-	# df_moment = GBPUSD_data.get_5M()
-	# matrix_trader = MatrixTrader('GBPUSD','GBPUSD',df,df_moment,1000)
-	# report = matrix_trader.simulate()
-	# myBaseTrader = BaseTrader()
-	# myBaseTrader.report = report
-	# myBaseTrader.draw_graph()
-	# myBaseTrader.save_trade_history()
-	# myBaseTrader.analyze_trades()
-
 
 	GBPUSD_data = Pair(GBPUSD)
-<<<<<<< HEAD
-	# Dataframe for test
-	dfall = GBPUSD_data.get_1D()
-	df = dfall.loc[dfall.index[-500:-200]]# the five minutes time frame does not cover the 1 D range!!!!
-	df.index = df.index + timedelta(hours=13)# I am guessing we are not going to trade at 00:00:00 every day
-	atr = ATR(14)
-	df['ATR'] = atr.calculate(df)
-	df['signal'] = -1
-	df_moment = GBPUSD_data.get_5M()
-	matrix_trader = MatrixTrader('GBPUSD','GBPUSD',df,df_moment,1000)
-	trade_log = matrix_trader.simulate()
-	myBaseTrader = BaseTrader()
-	myBaseTrader.report = trade_log
-	myBaseTrader.draw_graph()
-	myBaseTrader.save_trade_history()
-	myBaseTrader.analyze_trades()
-=======
 	matrix_trader = MatrixTrader(GBPUSD_data, GBPUSD_data, timeframe = '1D')
 	dm = CoinToss()
 	
-	features = pd.DataFrame(np.random.rand(len(GBPUSD_data.get_1D()), 5))
+	features = pd.DataFrame(np.random.rand(len(GBPUSD_data.get_1D()), 5), index = GBPUSD_data.get_1D().index)
 	signals = pd.Series(dm.decide(features), features.index)
 
 	matrix_trader.simulate(signals)
@@ -209,4 +179,3 @@ if __name__ == '__main__':
 
 
 
->>>>>>> d9195bc9a905b705f6b98be54f3afd6f0925dce3

@@ -3,6 +3,8 @@ import sys
 sys.path.insert(0,'..')
 from utils.GlobalVariables import *
 
+import pprint as pp
+
 class Trade(object):
 	# This class will be used in the traders to record the trades's information
 
@@ -16,9 +18,9 @@ class Trade(object):
 
 	def set_opening_info(self, opening_time , main_open_price, aux_open_price,
                              trade_type, balance, ATR, risk, stop_loss1,
-                             stop_loss2,pelle_price,take_profit):
+                             stop_loss2,pelle_price,take_profit, spread):
 		self.opening_time = opening_time
-		self.main_opening_price = main_open_price
+		self.main_opening_price = main_open_price + trade_type * spread
 		self.aux_opening_price = aux_open_price
 		self.risk = risk
 		self.balance = balance
@@ -115,7 +117,7 @@ class Trade(object):
 		'balance': self.balance,
 		'closing_balance': self.closing_balance,
 		'risk': self.risk,
-		'volume': self.trade_size,
+		'trade_size': self.trade_size,
 		'profit': self.profit
 		}
 		return dic

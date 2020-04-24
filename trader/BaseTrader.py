@@ -34,7 +34,7 @@ class BaseTrader(object):
 							console_level = logging.WARNING,
 							file_level = logging.DEBUG)
 
-	def draw_graph(self):
+	def draw_graph(self, should_show = False):
 		# This method must draw a graph based on the report of the trades
 		balances = self.report['closing_balance']
 
@@ -44,9 +44,10 @@ class BaseTrader(object):
 		plt.title(self.name)
 		plt.grid(True)
 		plt.savefig(os.path.join(self.report_dir, 'Balance.png'))
+		if should_show: plt.show()
 		plt.close()
 
-	def analyze_trades(self):
+	def analyze_trades(self, verbose = False):
 		# This method should analyze the trades and save them as a report
 		# This report should use logging
 		# Total trades opened and closed in the simulation
@@ -89,22 +90,25 @@ class BaseTrader(object):
 		maximums = np.maximum.accumulate(df['profit'])
 		maximum_drawdown = np.max(1 - df['profit']/maximums)
 
-		analysis_report = {'Total trades':total_trades,
+		analysis_report = {'total_trades':total_trades,
 							'n_profit_trades': n_profit_trades,
 							'n_loss_trades': n_loss_trades,
-							'total_net_profit': total_net_profit,
-							'gross_profit': gross_profit,
-							'gross_loss': gross_loss,
-							'expected_payoff': expected_payoff,
-							'profit_factor': profit_factor,
-							'largest_profit_trade': largest_profit_trade,
-							'largest_loss_trade': largest_loss_trade,
-							'average_profit_trade': average_profit_trade,
-							'average_loss_trade': average_loss_trade,
+							'total_net_profit': round(total_net_profit, 3),
+							'gross_profit': round(gross_profit, 3),
+							'gross_loss': round(gross_loss, 3),
+							'expected_payoff': round(expected_payoff, 3),
+							'profit_factor': round(profit_factor, 3),
+							'largest_profit_trade': round(largest_profit_trade, 3),
+							'largest_loss_trade': round(largest_loss_trade, 3),
+							'average_profit_trade': round(average_profit_trade, 3),
+							'average_loss_trade': round(average_loss_trade, 3),
 							'cons_wins': cons_wins,
 							'cons_loss': cons_loss}
 
 		self.log.info(pprint.pformat(analysis_report))
+
+		if verbose: pprint.pprint(analysis_report)
+
 		return analysis_report
 
 

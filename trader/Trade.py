@@ -77,6 +77,17 @@ class Trade(object):
 		else:
 			raise ValueError ("Something is wrong with the trade size calculation")
 
+		self.closing_time_1 = 'not_assigned'
+		self.main_closing_price_1 = 'not_assigned'
+		self.aux_closing_price_1 = 'not_assigned'
+		self.closing_reason_1 = 'not_assigned'
+		self.closing_time_2 = 'not_assigned'
+		self.main_closing_price_2 = 'not_assigned'
+		self.aux_closing_price_2 = 'not_assigned'
+		self.closing_reason_2 = 'not_assigned'
+		self.closing_balance = 'not_assigned'
+		self.profit = 'not_assigned'
+
 	def set_closing_info_1(self, closing_time, main_closing_price,
                                aux_closing_price, closing_reason):
 		self.closing_time_1 = closing_time
